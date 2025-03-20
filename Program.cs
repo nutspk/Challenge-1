@@ -14,9 +14,9 @@ class Program
         TimeSpan cpuTime;
         Stopwatch stopwatch = new();
         ConcurrentDictionary<string, int> collections = new();
-        bool isRunning = false;
+        bool isOrdering = false;
         int isDuplicate = 0;
-        List<string> param = new() { "--r=", "--d=" };
+        List<string> param = new() { "--d=", "--o=" };
         List<string> val = new() { "true", "1" };
         try
         {
@@ -25,15 +25,17 @@ class Program
             {
                 if (arg.StartsWith(param[0]))
                 {
-                    string value = arg.Substring(param[0].Length).ToLower();
-                    isRunning = val.Contains(value);
+                    string value = arg.Substring(param[1].Length).ToLower(); ;
+                    isDuplicate = val.Contains(value) ? 1 : 0;
                 }
 
                 if (arg.StartsWith(param[1]))
                 {
-                    string value = arg.Substring(param[1].Length).ToLower(); ;
-                    isDuplicate = val.Contains(value) ? 1 : 0;
+                    string value = arg.Substring(param[0].Length).ToLower();
+                    isOrdering = val.Contains(value);
                 }
+
+                
             }
             #endregion
 
@@ -55,7 +57,7 @@ class Program
             var more = victims.Take(10).ToArray();
             var less = victims.TakeLast(10).ToArray();
 
-            if (isRunning) {
+            if (isOrdering) {
                 less = victims.GroupBy(v => v.Value)
                                         .OrderBy(g => g.Key)
                                         .SelectMany(g => g.Take(1))
@@ -70,11 +72,8 @@ class Program
                 sb.AppendLine($"{i+1}. {more[i].Key} = {more[i].Value}");
             }
             
-            
-
             sb.AppendLine($"Least duplicated name:");
-            for (int i = 0; i < less.Length; i++)
-            {
+            for (int i = 0; i < less.Length; i++) {
                 sb.AppendLine($"{i + 1}. {less[i].Key} = {less[i].Value}");
             }
 
